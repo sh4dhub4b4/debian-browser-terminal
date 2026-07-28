@@ -23,6 +23,11 @@ cat /etc/nginx/.htpasswd
 envsubst < /etc/nginx/nginx.conf.template > /etc/nginx/nginx.conf
 
 
+echo "Testing nginx config..."
+
+nginx -t
+
+
 echo "Starting supervisor..."
 
 exec supervisord -n
