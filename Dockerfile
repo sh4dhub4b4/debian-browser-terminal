@@ -11,13 +11,27 @@ RUN apt update && apt install -y \
     htop \
     git \
     ca-certificates \
+    nginx \
+    apache2-utils \
+    supervisor \
+    gettext-base \
     && rm -rf /var/lib/apt/lists/*
 
-# Install ttyd (not available from Debian apt)
+
 RUN wget -O /usr/local/bin/ttyd \
     https://github.com/tsl0922/ttyd/releases/latest/download/ttyd.x86_64 \
     && chmod +x /usr/local/bin/ttyd
 
+
+COPY nginx.conf.template /etc/nginx/nginx.conf.template
+COPY supervisord.conf /etc/supervisor/conf.d/supervisord.conf
+COPY entrypoint.sh /entrypoint.sh
+
+
+RUN chmod +x /entrypoint.sh
+
+
 EXPOSE 8080
 
-CMD ["ttyd", "-p", "8080", "-W", "bash", "-l"]
+
+CMD ["/entrypoint.sh"]
