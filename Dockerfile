@@ -32,6 +32,7 @@ RUN chmod +x /entrypoint.sh
 
 
 EXPOSE 8080
+EXPOSE 7681
 
 
 CMD ["/entrypoint.sh"]
