@@ -2,6 +2,7 @@
 
 set -e
 
+echo "AUTH_USER=$AUTH_USER"
 
 if [ -z "$AUTH_USER" ] || [ -z "$AUTH_PASSWORD" ]; then
     echo "Missing authentication variables"
@@ -15,7 +16,13 @@ htpasswd -bc \
     "$AUTH_PASSWORD"
 
 
+echo "Generated password file:"
+cat /etc/nginx/.htpasswd
+
+
 envsubst < /etc/nginx/nginx.conf.template > /etc/nginx/nginx.conf
 
+
+echo "Starting supervisor..."
 
 exec supervisord -n
