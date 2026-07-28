@@ -15,9 +15,7 @@ htpasswd -bc \
     "$AUTH_PASSWORD"
 
 
-envsubst \
-    < /etc/nginx/nginx.conf.template \
-    > /etc/nginx/nginx.conf
+envsubst < /etc/nginx/nginx.conf.template > /etc/nginx/nginx.conf
 
 
 exec supervisord -n
