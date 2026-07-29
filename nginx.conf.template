@@ -14,6 +14,13 @@ http {
             return 200 "NGINX OK\n";
         }
 
+        location /anime/ {
+            alias /workspace/anime-client/;
+            index index.html;
+            
+            # This ensures internal routing works perfectly for modern web apps
+            try_files $uri $uri/ /anime/index.html;
+        }
 
         location / {
 
