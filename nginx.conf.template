@@ -1,6 +1,7 @@
 events {}
 
 http {
+    include /etc/nginx/mime.types;
 
     server {
 
@@ -15,11 +16,8 @@ http {
         }
 
         location /anime/ {
-            alias /workspace/anime-client/;
+            root /workspace;
             index index.html;
-            
-            # This ensures internal routing works perfectly for modern web apps
-            try_files $uri $uri/ /anime/index.html;
         }
 
         location / {
