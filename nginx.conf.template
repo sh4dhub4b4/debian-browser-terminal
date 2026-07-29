@@ -10,8 +10,8 @@ http {
         auth_basic_user_file /etc/nginx/.htpasswd;
 
 
-        location /test {
-            return 200 "NGINX IS WORKING";
+        location /health {
+            return 200 "NGINX OK\n";
         }
 
 
