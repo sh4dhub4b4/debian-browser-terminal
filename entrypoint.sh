@@ -6,13 +6,12 @@ if [ -z "$AUTH_USER" ] || [ -z "$AUTH_PASSWORD" ]; then
     exit 1
 fi
 
-# --- NEW GIT SYNC LOGIC ---
+# --- GIT SYNC LOGIC ---
 if [ -n "$GIT_REPO" ] && [ -n "$GIT_TOKEN" ]; then
     echo "Configuring Git Workspace..."
     git config --global user.name "${GIT_USER_NAME:-'Render Terminal'}"
     git config --global user.email "${GIT_USER_EMAIL:-'terminal@render.local'}"
 
-    # Use token for passwordless HTTPS authentication
     AUTH_REPO="https://${GIT_TOKEN}@${GIT_REPO}"
 
     if [ ! -d "/workspace/.git" ]; then
@@ -26,7 +25,13 @@ else
     echo "No Git config provided. Starting empty workspace."
     mkdir -p /workspace
 fi
-# --------------------------
+
+# --- AUTO-RESTORE INSTALLED PACKAGES ON BOOT ---
+if [ -f "/workspace/apt-history.log" ]; then
+    echo "Restoring packages from apt-history.log..."
+    apt update && cat /workspace/apt-history.log | xargs -r apt install -y
+fi
+# -----------------------------------------------
 
 htpasswd -bc /etc/nginx/.htpasswd "$AUTH_USER" "$AUTH_PASSWORD"
 cp /etc/nginx/nginx.conf.template /etc/nginx/nginx.conf
@@ -35,16 +40,13 @@ cp /etc/nginx/nginx.conf.template /etc/nginx/nginx.conf
 cat << 'EOF' > /etc/profile.d/save-alias.sh
 save() {
     echo "Saving workspace..."
-    # Run in a subshell (...) so it doesn't change your current terminal directory
     (
         cd /workspace
         git add .
         
-        # If no argument is provided, use a timestamp
         if [ -z "$1" ]; then
             git commit -m "Manual save: $(date +'%Y-%m-%d %H:%M:%S')"
         else
-            # If arguments are provided, use them as the commit message
             git commit -m "$*"
         fi
         
@@ -54,18 +56,14 @@ save() {
 }
 
 apt() {
-    # Execute the actual apt command with all passed arguments
     command apt "$@"
     local exit_code=$?
     
-    # If the action was 'install' and it completed without errors, log it
     if [[ "$1" == "install" ]] && [ $exit_code -eq 0 ]; then
-        # Append the successful install command to a history file in the synced workspace
         echo "apt $@" >> /workspace/apt-history.log
         echo "📝 Logged installation to /workspace/apt-history.log"
     fi
     
-    # Return the original exit code so scripts using apt don't break
     return $exit_code
 }
 EOF
