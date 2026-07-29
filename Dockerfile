@@ -26,10 +26,10 @@ RUN wget -O /usr/local/bin/ttyd \
 COPY nginx.conf.template /etc/nginx/nginx.conf.template
 COPY supervisord.conf /etc/supervisor/conf.d/supervisord.conf
 COPY entrypoint.sh /entrypoint.sh
-
+COPY git-sync.sh /git-sync.sh
 
 RUN chmod +x /entrypoint.sh
-
+RUN chmod +x /git-sync.sh
 
 EXPOSE 8080
 
