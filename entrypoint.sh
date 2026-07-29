@@ -29,7 +29,10 @@ fi
 # --- AUTO-RESTORE INSTALLED PACKAGES ON BOOT ---
 if [ -f "/workspace/apt-history.log" ]; then
     echo "Restoring packages from apt-history.log..."
-    apt update && cat /workspace/apt-history.log | xargs -r apt install -y
+    apt update 
+    
+    # Strip the "apt install" text and pass only the package names
+    sed 's/apt install //g' /workspace/apt-history.log | xargs -r apt install -y
 fi
 # -----------------------------------------------
 
