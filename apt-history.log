@@ -1,2 +1,3 @@
 apt install tree
 apt install mousepad
+apt install npm
