@@ -1,1 +1,3 @@
 apt install npm
+apt install file
+apt install nethack-console
