@@ -2,3 +2,4 @@ apt install npm
 apt install file
 apt install nethack-console
 apt install bsdgames
+apt install iputils-ping
